@@ -54,24 +54,22 @@ class Stocks extends Component{
             lowArr: lowArr,
             closeArr: closeArr,
             volumeArr: volumeArr,
-        },function () {
-            this.displayNeunetwork(this.state.input);
         });
     }
 
     displayNeunetwork = (input) => {
-        fetch("https://cors-anywhere.herokuapp.com/afternoon-reef-20637.herokuapp.com/prediction/" + input, {headers: {'Access-Control-Allow-Origin': '*'}})
-            .then(response => response.json())
-            .then(data => this.setState({
-                percentDiff: data["percentage_difference"],
-                today: data["today"],
-                tmrPredict: data["tommorrow_predicted"]
-            }, function() {
-                console.log("Percentage of difference is", this.state.percentDiff);
-                console.log("Today's price is", this.state.today);
-                console.log("Tommorow's price will be", this.state.tmrPredict);
-            }))
-            .catch(error => console.log(error));
+        console.log("fetch data")
+        var url = "http://ecovisor.herokuapp.com/results/c58f8d89-ec5d-442f-9c05-c361fe3faf8b"
+        fetch(url, {
+          crossDomain:true,
+          method: 'GET',
+          headers: {'Content-Type':'application/json'},
+        })
+          .then(response => response.json())
+          .then(responseJson => {
+            console.log(responseJson)
+        })
+
     }
 
     display = () => {
@@ -93,14 +91,22 @@ class Stocks extends Component{
         this.setState({type: "Vol"})
     }
 
+    onButton() {
+        console.log("This works")
+        console.log("stock state:", )
+
+    }
+
+
+
     render(){
         let Person;
-        if(this.state.type == "High"){
+        if(this.state.type === "High"){
             Person = <LineExample
                     name = {this.state.name}
                     time = {this.state.timeArr}
                     input = {this.state.highArr}/>;
-        }else if(this.state.type == "Low"){
+        }else if(this.state.type === "Low"){
             Person = <LineExample
                     name = {this.state.name}
                     time = {this.state.timeArr}
@@ -120,6 +126,7 @@ class Stocks extends Component{
                 <button onClick = {this.showVol}>Show volume sold</button>
                 <input type = "text" id = "nameInput" placeholder = "Enter your stock symbol" ></input>
                 {Person}
+                <button onClick = {this.displayNeunetwork}>Display Prediction</button>
             </div>
         );
     }
