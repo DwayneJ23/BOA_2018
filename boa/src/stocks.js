@@ -59,7 +59,7 @@ class Stocks extends Component{
 
     displayNeunetwork = (input) => {
         console.log("fetch data")
-        var url = "http://ecovisor.herokuapp.com/results/c58f8d89-ec5d-442f-9c05-c361fe3faf8b"
+        var url = "http://ecovisor.herokuapp.com/prediction/nvda"
         fetch(url, {
           crossDomain:true,
           method: 'GET',
@@ -68,6 +68,31 @@ class Stocks extends Component{
           .then(response => response.json())
           .then(responseJson => {
             console.log(responseJson)
+            const id = responseJson["id"]
+            console.log(id)
+
+            var resultsURL = "http://ecovisor.herokuapp.com/results/" + id
+
+            // 20 second timeout seems to be enough time to finish training
+            // and display the predicted values
+            setTimeout(() => {
+                console.log('20 seconds have passed')
+
+                fetch(resultsURL, {
+                    crossDomain: true,
+                    method: 'GET',
+                    headers: {'Content-Type':'application/json'},
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                    })
+                    .catch(() => {
+                        console.log("There was an error")
+
+                    })
+
+            }, 20000)
         })
 
     }
