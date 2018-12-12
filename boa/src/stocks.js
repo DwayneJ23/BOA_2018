@@ -57,6 +57,8 @@ class Stocks extends Component{
         });
     }
 
+    
+
     displayNeunetwork = (input) => {
         console.log("fetch data")
         var url = "http://ecovisor.herokuapp.com/prediction/nvda"
@@ -72,27 +74,8 @@ class Stocks extends Component{
             console.log(id)
 
             var resultsURL = "http://ecovisor.herokuapp.com/results/" + id
-
-            // 20 second timeout seems to be enough time to finish training
-            // and display the predicted values
-            setTimeout(() => {
-                console.log('20 seconds have passed')
-
-                fetch(resultsURL, {
-                    crossDomain: true,
-                    method: 'GET',
-                    headers: {'Content-Type':'application/json'},
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data)
-                    })
-                    .catch(() => {
-                        console.log("There was an error")
-
-                    })
-
-            }, 20000)
+            this.performPredictionFetch(resultsURL)
+            
         })
 
     }
@@ -119,6 +102,41 @@ class Stocks extends Component{
     onButton() {
         console.log("This works")
         console.log("stock state:", )
+
+    }
+
+    performPredictionFetch(url) {
+        // 20 second timeout seems to be enough time to finish training
+        // and display the predicted values
+        setTimeout(() => {
+            console.log('5 seconds have passed')
+
+            fetch(url, {
+                crossDomain: true,
+                method: 'GET',
+                headers: {'Content-Type':'application/json'},
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(url)
+                    console.log(data)
+                    if (data["Message"] === "The job is still running - try again in a few seconds") {
+                        console.log("Perform request again with the same id")
+                        this.performPredictionFetch(url)
+
+                    } else {
+                        console.log(data["percentage_difference"])
+                        console.log(data["today"])
+                        console.log(data["tommorrow"])
+                    }
+                    
+                })
+                .catch(() => {
+                    console.log("There was an error")
+
+                })
+
+        }, 5000)
 
     }
 
