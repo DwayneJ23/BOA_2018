@@ -18,6 +18,7 @@ class Stocks extends Component{
             type: "High",
             // "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=AMD&interval=5min&outputsize=full&apikey=KJEQ4OXGXSCLWKKV",
         }
+        this.getNews = this.getNews.bind(this)
     }
     updateObeject=()=>{
         fetch(this.state.url)
@@ -61,7 +62,8 @@ class Stocks extends Component{
 
     displayNeunetwork = (input) => {
         console.log("fetch data")
-        var url = "http://ecovisor.herokuapp.com/prediction/nvda"
+        console.log("ticker: ", this.state.input)
+        var url = "http://ecovisor.herokuapp.com/prediction/" + this.state.input
         fetch(url, {
           crossDomain:true,
           method: 'GET',
@@ -131,8 +133,8 @@ class Stocks extends Component{
                     }
                     
                 })
-                .catch(() => {
-                    console.log("There was an error")
+                .catch((error) => {
+                    console.log("There was an error", error)
 
                 })
 
@@ -140,7 +142,33 @@ class Stocks extends Component{
 
     }
 
+    getNews() {
+        console.log("Get news")
+        console.log("Current ticker: ", this.state.input)
 
+        var queryParam =  "amd stocks"
+
+        // max page size is 100 for fetch
+
+        var url = 'https://newsapi.org/v2/everything?' +
+              'q=' + queryParam +
+              '&from=2018-12-11&' +
+              'sortBy=popularity&' + 
+              'pageSize=100&' +
+              'apiKey=f9878693aa7d4de394cc43948d1e19d9';
+        var req = new Request(url);
+
+        fetch(req).then(
+        function(response) {
+          if (response.status !== 200) {
+            console.log('Problem in fetching');
+            return;
+          }
+          response.json().then(function(data) {
+            console.log(data);
+          });
+        })    
+    }
 
     render(){
         let Person;
@@ -170,6 +198,8 @@ class Stocks extends Component{
                 <input type = "text" id = "nameInput" placeholder = "Enter your stock symbol" ></input>
                 {Person}
                 <button onClick = {this.displayNeunetwork}>Display Prediction</button>
+                <br></br>
+                <button onClick={this.getNews}>Get News</button>
             </div>
         );
     }
